@@ -1,22 +1,14 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-
 	"github.com/justinas/nosurf"
+	"net/http"
 )
 
-func WriteToConsole(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Hit the Page")
-		next.ServeHTTP(w, r)
-	})
-}
-
-//NoSurf adds csrf protection to all POST request
+// NoSurf is the csrf protection middleware
 func NoSurf(next http.Handler) http.Handler {
 	csrfHandler := nosurf.New(next)
+
 	csrfHandler.SetBaseCookie(http.Cookie{
 		HttpOnly: true,
 		Path:     "/",
@@ -26,7 +18,7 @@ func NoSurf(next http.Handler) http.Handler {
 	return csrfHandler
 }
 
-//SessionLoad loads and saves the session on every request
+// SessionLoad loads and saves session data for current request
 func SessionLoad(next http.Handler) http.Handler {
 	return session.LoadAndSave(next)
 }
